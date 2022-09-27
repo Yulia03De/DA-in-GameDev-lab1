@@ -6,9 +6,9 @@
 
 | Задание | Выполнение | Баллы |
 | ------ | ------ | ------ |
-| Задание 1 | # | 60 |
-| Задание 2 | # | 20 |
-| Задание 3 | # | 20 |
+| Задание 1 | * | 60 |
+| Задание 2 | * | 20 |
+| Задание 3 | * | 20 |
 
 знак "*" - задание выполнено; знак "#" - задание не выполнено;
 
@@ -191,68 +191,32 @@ plt.plot(x, prediction)
 ![image](https://user-images.githubusercontent.com/113303734/192351884-7007a776-447a-434d-8875-69fde1d85ab3.png)
 
 ## Задание 3
-### Изучить код на Python и ответить на вопросы.
+### Должна ли величина loss стремиться к нулю при изменении исходных данных? Ответьте на вопрос, приведите пример выполнения кода, который подтверждает ваш ответ.
 
-- Должна ли величина loss стремиться к нулю при изменении исходных данных? Ответьте на вопрос, приведите пример выполнения кода, который подтверждает ваш ответ.
+Чем больше количество итераций, тем меньше значение loss, которое будет стремиться к нулю.
 
+![image](https://user-images.githubusercontent.com/113303734/192515161-477ff2e2-ad07-45f1-a45f-e97a1905c8b7.png)
 
-
-- Какова роль параметра Lr? Ответьте на вопрос, приведите пример выполнения кода, который подтверждает ваш ответ. В качестве эксперимента можете изменить значение параметра.
-
-
-```py
-
-import ScriptEnv
-ScriptEnv.Initialize("Ansoft.ElectronicsDesktop")
-oDesktop.RestoreWindow()
-oProject = oDesktop.NewProject()
-oProject.Rename("C:/Users/denisov.dv/Documents/Ansoft/SphereDIffraction.aedt", True)
-oProject.InsertDesign("HFSS", "HFSSDesign1", "HFSS Terminal Network", "")
-oDesign = oProject.SetActiveDesign("HFSSDesign1")
-oEditor = oDesign.SetActiveEditor("3D Modeler")
-oEditor.CreateSphere(
-	[
-		"NAME:SphereParameters",
-		"XCenter:="		, "0mm",
-		"YCenter:="		, "0mm",
-		"ZCenter:="		, "0mm",
-		"Radius:="		, "1.0770329614269mm"
-	], 
-)
-
-```
-
-## Задание 3
 ### Какова роль параметра Lr? Ответьте на вопрос, приведите пример выполнения кода, который подтверждает ваш ответ. В качестве эксперимента можете изменить значение параметра.
 
-- Перечисленные в этом туториале действия могут быть выполнены запуском на исполнение скрипт-файла, доступного [в репозитории](https://github.com/Den1sovDm1triy/hfss-scripting/blob/main/ScreatingSphereInAEDT.py).
-- Для запуска скрипт-файла откройте Ansys Electronics Desktop. Перейдите во вкладку [Automation] - [Run Script] - [Выберите файл с именем ScreatingSphereInAEDT.py из репозитория].
+Когда параметр Lr увеличивается, расфокусировка лучей также увеличивается. 
+Изменим параметр Lr и посмотрим изменение луча при разных значениях. Изначальное значение в программе было Lr = 0.000001
 
-```py
+Результат программы при Lr = 0.000001:
 
-import ScriptEnv
-ScriptEnv.Initialize("Ansoft.ElectronicsDesktop")
-oDesktop.RestoreWindow()
-oProject = oDesktop.NewProject()
-oProject.Rename("C:/Users/denisov.dv/Documents/Ansoft/SphereDIffraction.aedt", True)
-oProject.InsertDesign("HFSS", "HFSSDesign1", "HFSS Terminal Network", "")
-oDesign = oProject.SetActiveDesign("HFSSDesign1")
-oEditor = oDesign.SetActiveEditor("3D Modeler")
-oEditor.CreateSphere(
-	[
-		"NAME:SphereParameters",
-		"XCenter:="		, "0mm",
-		"YCenter:="		, "0mm",
-		"ZCenter:="		, "0mm",
-		"Radius:="		, "1.0770329614269mm"
-	], 
-)
+![image](https://user-images.githubusercontent.com/113303734/192508830-4c1d3693-0a4d-4386-9efa-5ce60d4c4acb.png)
 
-```
+Результат программы при Lr = 0.000000001:
+
+![image](https://user-images.githubusercontent.com/113303734/192509276-98473a84-08f9-4ce5-99cc-42b726cf7f6b.png)
+
+Результат программы при Lr = 0.0000008:
+
+![image](https://user-images.githubusercontent.com/113303734/192510375-6a242fa2-9a2f-43a9-acc6-9636e0401467.png)
 
 ## Выводы
 
-Абзац умных слов о том, что было сделано и что было узнано.
+В ходе лабораторной работы ознакомилась с основными операторами зыка Python на примере реализации линейной регрессии. Также познакомилась с работой в Unity и Google.Colab 
 
 | Plugin | README |
 | ------ | ------ |
