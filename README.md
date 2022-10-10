@@ -1,5 +1,5 @@
 # АНАЛИЗ ДАННЫХ И ИСКУССТВЕННЫЙ ИНТЕЛЛЕКТ [in GameDev]
-Отчет по лабораторной работе #1 выполнила:
+Отчет по лабораторной работе #2 выполнила:
 - Дедюхина Юлия Сергеевна
 - РИ210930
 Отметка о выполнении заданий (заполняется студентом):
@@ -35,188 +35,261 @@
 - ✨Magic ✨
 
 ## Цель работы
-Ознакомиться с основными операторами зыка Python на примере реализации линейной регрессии.
+Познакомиться с программными средствами для организции передачи данных между инструментами google, Python и Unity.
 
 ## Задание 1
-### Написать программы Hello World на Python и Unity.
+### Реализовать совместную работу и передачу данных в связке Python - Google-Sheets – Unity.
+
 Ход работы:
 
+1) В облачном сервисе google console подключить API для работы с google sheets и google drive:
+
+![image](https://user-images.githubusercontent.com/113303734/194915621-561cb5d1-2744-4414-b097-d4836ca7d3fe.png)
+![image](https://user-images.githubusercontent.com/113303734/194915678-d1450623-5cd9-4ae3-97e5-a6595f118794.png)
+![image](https://user-images.githubusercontent.com/113303734/194916877-4783b050-2e4a-4014-a9f5-7350e242e292.png)
+
+2) Реализовать запись данных из скрипта на python в google-таблицу. Данные описывают изменение темпа инфляции на протяжении 11 отсчётных периодов, с учётом стоимости игрового объекта в каждый период:
+
+Код Python:
+
 ```py
 
-print('Hello World')
+import gspread
+import numpy as np
+
+gc = gspread.service_account(filename='unitydatascience-365111-cfbbafc14689.json')
+sh = gc.open('UnitySheets')
+price = np.random.randint(2000, 10000, 11)
+mon = list(range(1, 11))
+i = 0
+while i <= len(mon):
+    i += 1
+    if i == 0:
+        continue
+    else:
+        tempInf = ((price[i - 1] - price[i - 2]) / price[-2]) * 100
+        tempInf = str(tempInf)
+        tempInf = tempInf.replace('.', ',')
+        sh.sheet1.update(('A' + str(i)), str(i))
+        sh.sheet1.update(('B' + str(i)), str(price[i - 1]))
+        sh.sheet1.update(('C' + str(i)), tempInf)
+        print(tempInf)
 
 ```
-- Скриншоты с демонстрацией сохранения документа google.colab и выводом сообщения Hello World для Python:
 
-![image](https://user-images.githubusercontent.com/113303734/192341707-1a9d5110-6804-4577-8a3f-8a46b8eb5c08.png)
-![image](https://user-images.githubusercontent.com/113303734/192341785-69cb4c5a-fa55-466c-a511-554930b8e9e7.png)
+![image](https://user-images.githubusercontent.com/113303734/194916112-decf2f76-0e9e-43b4-849f-187227665beb.png)
 
-- Скриншоты вывода сообщения Hello World в консоль для Unity:
+Google-таблица:
 
-![image](https://user-images.githubusercontent.com/113303734/192337752-a017bb73-55d5-46ee-ac1a-669667ab752e.png)
-![image](https://user-images.githubusercontent.com/113303734/192337825-be00f5a3-c19b-473b-977d-fd6dce160d5b.png)
+![image](https://user-images.githubusercontent.com/113303734/194916286-4cee10bf-9b19-4ffc-a1d2-31dd28703392.png)
 
+Вывод: данные при выводе в PyCharm и Google-таблицы совпадают.
+
+3) Создать новый проект на Unity, который будет получать данные из google-таблицы, в которую были записаны данные в предыдущем пункте:
+
+Новый проект на Unity:
+
+![image](https://user-images.githubusercontent.com/113303734/194917851-f703f0e9-eadb-4f6e-807d-1f8ea280c1bb.png)
+
+![image](https://user-images.githubusercontent.com/113303734/194917912-7de41a29-75c5-42e5-8671-9fcc52b3cbe8.png)
+
+![image](https://user-images.githubusercontent.com/113303734/194917946-8f65999c-8006-40f3-9de8-1452848ec169.png)
+
+Итоговый код в VS Code:
+
+```py
+
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Networking;
+using SimpleJSON;
+
+public class NewBehaviourScript : MonoBehaviour
+{
+    public AudioClip goodSpeak;
+    public AudioClip normalSpeak;
+    public AudioClip badSpeak;
+    private AudioSource selectAudio;
+    private Dictionary<string,float> dataSet = new Dictionary<string, float>();
+    private bool statusStart = false;
+    private int i = 1;
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        StartCoroutine(GoogleSheets());
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        if (dataSet["Mon_" + i.ToString()] <= 10 & statusStart == false & i != dataSet.Count)
+        {
+            StartCoroutine(PlaySelectAudioGood());
+            Debug.Log(dataSet["Mon_" + i.ToString()]);
+        }
+
+        if (dataSet["Mon_" + i.ToString()] > 10 & dataSet["Mon_" + i.ToString()] < 100 & statusStart == false & i != dataSet.Count)
+        {
+            StartCoroutine(PlaySelectAudioNormal());
+            Debug.Log(dataSet["Mon_" + i.ToString()]);
+        }
+
+        if (dataSet["Mon_" + i.ToString()] >= 100 & statusStart == false & i != dataSet.Count)
+        {
+            StartCoroutine(PlaySelectAudioBad());
+            Debug.Log(dataSet["Mon_" + i.ToString()]);
+        }
+    }
+
+    IEnumerator GoogleSheets()
+    {
+        UnityWebRequest curentResp = UnityWebRequest.Get("https://sheets.googleapis.com/v4/spreadsheets/1oc2m8TZ7gsLR73cPK7VFnIqN8qr9aJVFcCbSR_11kHo/values/Лист1?key=AIzaSyCncSKgK4l6MmhlgbgjZqd66uGrFUjKOlE");
+        yield return curentResp.SendWebRequest();
+        string rawResp = curentResp.downloadHandler.text;
+        var rawJson = JSON.Parse(rawResp);
+        foreach (var itemRawJson in rawJson["values"])
+        {
+            var parseJson = JSON.Parse(itemRawJson.ToString());
+            var selectRow = parseJson[0].AsStringList;
+            dataSet.Add(("Mon_" + selectRow[0]), float.Parse(selectRow[2]));
+        }
+        Debug.Log(dataSet["Mon_1"]);
+    }
+
+    IEnumerator PlaySelectAudioGood()
+    {
+        statusStart = true;
+        selectAudio = GetComponent<AudioSource>();
+        selectAudio.clip = goodSpeak;
+        selectAudio.Play();
+        yield return new WaitForSeconds(3);
+        statusStart = false;
+        i++;
+    }
+
+    IEnumerator PlaySelectAudioNormal()
+    {
+        statusStart = true;
+        selectAudio = GetComponent<AudioSource>();
+        selectAudio.clip = normalSpeak;
+        selectAudio.Play();
+        yield return new WaitForSeconds(3);
+        statusStart = false;
+        i++;
+    }
+    
+    IEnumerator PlaySelectAudioBad()
+    {
+        statusStart = true;
+        selectAudio = GetComponent<AudioSource>();
+        selectAudio.clip = badSpeak;
+        selectAudio.Play();
+        yield return new WaitForSeconds(4);
+        statusStart = false;
+        i++;
+    }
+}
+
+```
+Google-таблица:
+
+![image](https://user-images.githubusercontent.com/113303734/194918268-c2227c9f-1793-49ce-9ff0-f837a67ee124.png)
+
+Вывод: данные в консоли Unity и Google-таблицы совпадают.
+
+4) Написать функционал на Unity, в котором будет воспризводиться аудио-файл в зависимости от значения данных из таблицы:
+
+Подключены аудио-файлы:
+
+![image](https://user-images.githubusercontent.com/113303734/194919066-8fdeae4c-67ec-4047-8a4f-538b0c0b3936.png)
+
+Google-таблица:
+
+![image](https://user-images.githubusercontent.com/113303734/194919127-6d8e492d-57b9-452c-bc7d-46f27c13e010.png)
+
+Вывод: при подключении аудио-файлов данные в консоли Unity и Google-таблицы совпадают.
 
 ## Задание 2
-### Пошагово выполнить каждый пункт с описанием и примером реализации задачи.
+### Реализовать запись в Google-таблицу набора данных, полученных с помощью линейной регрессии из лабораторной работы № 1. 
+
 Ход работы: 
 
-- Произвести подготовку данных для работы с алгоритмом линейной регрессии. 10 видов данных были установлены случайным образом, и данные находились в линейной зависимости. Данные преобразуются в формат массива, чтобы их можно было вычислить напрямую при использовании умножения и сложения.
-- Определите связанные функции. Функция модели: определяет модель линейной регрессии wx+b. Функция потерь: функция потерь среднеквадратичной ошибки. Функция оптимизации: метод градиентного спуска для нахождения частных производных w и b.
+Проделала ту же работу с Google Console как в 1 задании:
+
+![image](https://user-images.githubusercontent.com/113303734/194931381-ba372906-c08b-4c56-b2a5-1e01983b0dbb.png)
+
+Создада лист в google-таблицах по аналогии из 1 задания и переделала код линейной регрессии из ЛР№1, данные появились в таблице:
+
+![image](https://user-images.githubusercontent.com/113303734/194931652-5e9d0e3c-96c6-4849-92d3-4402d5a53b6b.png)
+
+Конечный код:
 
 ```py
 
-In [ ]:
-#Import the required modules, numpy for calculation, and Matplotlib for drawing
+import gspread
 import numpy as np
-import matplotlib.pyplot as plt
-#This code is for jupyter Notebook only
-%matplotlib inline
 
-# define data, and change list to array
-x = [3,21,22,34,54,34,55,67,89,99]
+gc = gspread.service_account(filename='pythonlab1-365117-b8d467fdf2a6.json')
+sh = gc.open("PythonSheets_2")
+
+x = [3, 21, 22, 34, 54, 34, 55, 67, 89, 99]
 x = np.array(x)
-y = [2,22,24,65,79,82,55,130,150,199]
+
+y = [2, 22, 24, 65, 79, 82, 55, 130, 150, 199]
 y = np.array(y)
 
-#Show the effect of a scatter plot
-plt.scatter(x,y)
-
-#The basic linear regression model is wx+b, and since this is a two-dimensional space, the model is ax+b
 def model(a, b, x):
-    return a*x + b
+  return a * x + b
 
-#The most commonly used loss function of linear regresstion model is the loss function of mean, variance difference
 def loss_function(a, b, x, y):
-    num = len(x)
+  num = len(x)
+  prediction = model(a, b, x)
+  return (0.5 / num) * (np.square(prediction - y)).sum()
+
+def optimize(a, b, x, y):
+  num = len(x)
+  prediction = model(a, b, x)
+  da = (1.0 / num) * ((prediction - y) * x).sum()
+  db = (1.0 / num) * ((prediction - y).sum())
+  a = a - Lr * da
+  b = b - Lr * db
+  return a, b
+
+def iterate(a, b, x, y, times):
+  for i in range(times):
+    a, b= optimize(a, b, x, y)
+  return a, b
+
+a = np.random.rand(1)
+b = np.random.rand(1)
+Lr = 0.0001
+
+prev_loss = 0
+
+for i in range(10):
+    a, b = iterate(a, b, x, y, i + 1)
+
     prediction = model(a, b, x)
-    return (0.5/num)*(mss.square(prediction - y)).sum()
+    temp_loss = loss_function(a, b, x, y)
 
-#The optimization function mainly USES partial derivatives to update two parameters a and b
-def optimize (a, b, x, y):
-    num = len(x)
-    prediction = model(a, b, x)
-    #Update the values of A and B by finding the partial derivatives of the loss function on a and b
-    da = (1.0/num)*((prediction - y)*x).sum()
-    db = (1.0/num)*((prediction - y).sum())
-    a = a - Lr*da
-    b = b - Lr*db
-    return a, b
+    diff_loss = abs(temp_loss - prev_loss)
+    prev_loss = temp_loss
 
-#iterated function, return a and b
-def iterate (a, b, x, y, times):
-    for i in range (times):
-        a, b = optimize(a, b, x, y)
-    return a, b
-
-#Initialize parameters and display
-a = mss.random.rand(1)
-print (a)
-b = mss.random.rand(1)
-print(b)
-Lr = 0.000001
-
-#For the first iteration, the parameter values, losses, and visualization after the iteration are displayed
-a, b = iterate(a, b, x, y, 1)
-prediction = model(a, b, x)
-loss = loss_function(a, b, x, y)
-print(a, b, loss)
-plt.scatter(x, y)
-plt.plot(x, prediction)
-
-#For the second iteration, the parameter values, losses, and visualization after the iteration are displayed
-a, b = iterate(a, b, x, y, 2)
-prediction = model(a, b, x)
-loss = loss_function(a, b, x, y)
-print(a, b, loss)
-plt.scatter(x, y)
-plt.plot(x, prediction)
-
-#For the third iteration, the parameter values, losses, and visualization after the iteration are displayed
-a, b = iterate(a, b, x, y, 3)
-prediction = model(a, b, x)
-loss = loss_function(a, b, x, y)
-print(a, b, loss)
-plt.scatter(x, y)
-plt.plot(x, prediction)
-
-#For the fourth iteration, the parameter values, losses, and visualization after the iteration are displayed
-a, b = iterate(a, b, x, y, 4)
-prediction = model(a, b, x)
-loss = loss_function(a, b, x, y)
-print(a, b, loss)
-plt.scatter(x, y)
-plt.plot(x, prediction)
-
-#For the fifth iteration, the parameter values, losses, and visualization after the iteration are displayed
-a, b = iterate(a, b, x, y, 5)
-prediction = model(a, b, x)
-loss = loss_function(a, b, x, y)
-print(a, b, loss)
-plt.scatter(x, y)
-plt.plot(x, prediction)
-
-#For the sixth iteration, the parameter values, losses, and visualization after the iteration are displayed
-a, b = iterate(a, b, x, y, 10000)
-prediction = model(a, b, x)
-loss = loss_function(a, b, x, y)
-print(a, b, loss)
-plt.scatter(x, y)
-plt.plot(x, prediction)
+    sh.sheet1.update(('A' + str(i + 1)), str(i + 1))
+    sh.sheet1.update(('B' + str(i + 1)), str(temp_loss))
+    sh.sheet1.update(('C' + str(i + 1)), str(diff_loss))
 
 ```
 
-- Результат программы при 1 итерации:
-
-![image](https://user-images.githubusercontent.com/113303734/192350723-7c25d147-189f-410a-b3c9-32731e36eca6.png)
-
-- Результат программы при 2 итерации:
-
-![image](https://user-images.githubusercontent.com/113303734/192350954-95482382-546d-4e14-9e06-cf2590ab8cb0.png)
-
-- Результат программы при 3 итерации:
-
-![image](https://user-images.githubusercontent.com/113303734/192351175-439e7e8b-5a37-4fef-8ee7-1d94b6bb6492.png)
-
-- Результат программы при 4 итерации:
-
-![image](https://user-images.githubusercontent.com/113303734/192351372-58cdfe4c-12db-446d-93e7-fe67c67c48cb.png)
-
-- Результат программы при 5 итерации:
-
-![image](https://user-images.githubusercontent.com/113303734/192351618-3d03d9e0-fc8c-4f82-b24c-68e7bdd0f4d6.png)
-
-- Результат программы при 6 итерации:
-
-![image](https://user-images.githubusercontent.com/113303734/192351884-7007a776-447a-434d-8875-69fde1d85ab3.png)
-
 ## Задание 3
-### Должна ли величина loss стремиться к нулю при изменении исходных данных? Ответьте на вопрос, приведите пример выполнения кода, который подтверждает ваш ответ.
+### Самостоятельно разработать сценарий воспроизведения звукового сопровождения в Unity в зависимости от изменения считанных данных в задании 2.
 
-Чем больше количество итераций, тем меньше значение loss, которое будет стремиться к нулю.
-
-![image](https://user-images.githubusercontent.com/113303734/192515161-477ff2e2-ad07-45f1-a45f-e97a1905c8b7.png)
-
-### Какова роль параметра Lr? Ответьте на вопрос, приведите пример выполнения кода, который подтверждает ваш ответ. В качестве эксперимента можете изменить значение параметра.
-
-Когда параметр Lr увеличивается, расфокусировка лучей также увеличивается. 
-Изменим параметр Lr и посмотрим изменение луча при разных значениях. Изначальное значение в программе было Lr = 0.000001
-
-Результат программы при Lr = 0.000001:
-
-![image](https://user-images.githubusercontent.com/113303734/192508830-4c1d3693-0a4d-4386-9efa-5ce60d4c4acb.png)
-
-Результат программы при Lr = 0.000000001:
-
-![image](https://user-images.githubusercontent.com/113303734/192509276-98473a84-08f9-4ce5-99cc-42b726cf7f6b.png)
-
-Результат программы при Lr = 0.0000008:
-
-![image](https://user-images.githubusercontent.com/113303734/192510375-6a242fa2-9a2f-43a9-acc6-9636e0401467.png)
 
 ## Выводы
 
-В ходе лабораторной работы ознакомилась с основными операторами зыка Python на примере реализации линейной регрессии. Также познакомилась с работой в Unity и Google.Colab 
+В ходе лабораторной работы познакомилась с программными средствами для организции передачи данных между инструментами google, Python и Unity. Научилась выводить данные из PyCharm в google-таблицы, а из google-таблиц в Unity с помощью предоставленного видео, а также самостоятельно попрактиковаться.
 
 | Plugin | README |
 | ------ | ------ |
