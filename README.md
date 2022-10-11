@@ -199,7 +199,7 @@ Google-таблица:
 
 Вывод: данные в консоли Unity и Google-таблицы совпадают.
 
-4) Написать функционал на Unity, в котором будет воспризводиться аудио-файл в зависимости от значения данных из таблицы:
+4) Написать функционал на Unity, в котором будет воспроизводиться аудио-файл в зависимости от значения данных из таблицы:
 
 Подключены аудио-файлы:
 
@@ -286,10 +286,111 @@ for i in range(10):
 ## Задание 3
 ### Самостоятельно разработать сценарий воспроизведения звукового сопровождения в Unity в зависимости от изменения считанных данных в задании 2.
 
+Ход работы:
+
+Разработан сценарий, при котором при значении меньше 5 воспроизводится звук Horosho, при значении от 5 до 500 включительно - звук Sredne, а более 500 - звук Ploho.
+
+Скрипт C# в Unity:
+
+```py
+
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Networking;
+using SimpleJSON;
+
+public class NewBehaviourScript : MonoBehaviour
+{
+    public AudioClip goodSpeak;
+    public AudioClip normalSpeak;
+    public AudioClip badSpeak;
+    private AudioSource selectAudio;
+    private Dictionary<string,float> dataSet = new Dictionary<string, float>();
+    private bool statusStart = false;
+    private int i = 1;
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        StartCoroutine(GoogleSheets());
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        if (dataSet["Mon_" + i.ToString()] <= 5 & statusStart == false & i != dataSet.Count)
+        {
+            StartCoroutine(PlaySelectAudioGood());
+            Debug.Log(dataSet["Mon_" + i.ToString()]);
+        }
+
+        if (dataSet["Mon_" + i.ToString()] > 5 & dataSet["Mon_" + i.ToString()] <= 500 & statusStart == false & i != dataSet.Count)
+        {
+            StartCoroutine(PlaySelectAudioNormal());
+            Debug.Log(dataSet["Mon_" + i.ToString()]);
+        }
+
+        if (dataSet["Mon_" + i.ToString()] > 500 & statusStart == false & i != dataSet.Count)
+        {
+            StartCoroutine(PlaySelectAudioBad());
+            Debug.Log(dataSet["Mon_" + i.ToString()]);
+        }
+    }
+
+    IEnumerator GoogleSheets()
+    {
+        UnityWebRequest curentResp = UnityWebRequest.Get("https://sheets.googleapis.com/v4/spreadsheets/1oc2m8TZ7gsLR73cPK7VFnIqN8qr9aJVFcCbSR_11kHo/values/Лист1?key=AIzaSyCncSKgK4l6MmhlgbgjZqd66uGrFUjKOlE");
+        yield return curentResp.SendWebRequest();
+        string rawResp = curentResp.downloadHandler.text;
+        var rawJson = JSON.Parse(rawResp);
+        foreach (var itemRawJson in rawJson["values"])
+        {
+            var parseJson = JSON.Parse(itemRawJson.ToString());
+            var selectRow = parseJson[0].AsStringList;
+            dataSet.Add(("Mon_" + selectRow[0]), float.Parse(selectRow[2]));
+        }
+    }
+
+    IEnumerator PlaySelectAudioGood()
+    {
+        statusStart = true;
+        selectAudio = GetComponent<AudioSource>();
+        selectAudio.clip = goodSpeak;
+        selectAudio.Play();
+        yield return new WaitForSeconds(3);
+        statusStart = false;
+        i++;
+    }
+
+    IEnumerator PlaySelectAudioNormal()
+    {
+        statusStart = true;
+        selectAudio = GetComponent<AudioSource>();
+        selectAudio.clip = normalSpeak;
+        selectAudio.Play();
+        yield return new WaitForSeconds(3);
+        statusStart = false;
+        i++;
+    }
+    
+    IEnumerator PlaySelectAudioBad()
+    {
+        statusStart = true;
+        selectAudio = GetComponent<AudioSource>();
+        selectAudio.clip = badSpeak;
+        selectAudio.Play();
+        yield return new WaitForSeconds(4);
+        statusStart = false;
+        i++;
+    }
+}
+
+```
 
 ## Выводы
 
-В ходе лабораторной работы познакомилась с программными средствами для организции передачи данных между инструментами google, Python и Unity. Научилась выводить данные из PyCharm в google-таблицы, а из google-таблиц в Unity с помощью предоставленного видео, а также самостоятельно попрактиковаться.
+В ходе лабораторной работы познакомилась с программными средствами для организции передачи данных между инструментами google, Python и Unity. Научилась выводить данные из PyCharm в google-таблицы, а из google-таблиц в Unity с помощью предоставленного видео. Также реализовала запись в google-таблицу набора данных, полученных с помощью линейной регрессии из лабораторной работы № 1 и разработала сценарий воспроизведения звукового сопровождения в Unity в зависимости от изменения считанных данных в задании 2.
 
 | Plugin | README |
 | ------ | ------ |
