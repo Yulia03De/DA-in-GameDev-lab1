@@ -43,11 +43,95 @@
 Ход работы:
 
 - Создала новый пустой 3D проект на Unity.
-- Скачала папку с ML агентом. Добавила ML Agent и .json – файлы
+- Скачала папку с ML агентом. Добавила ML Agent и .json – файлы.
 
-![image](https://user-images.githubusercontent.com/113303734/198016614-333c4239-5e48-4bd1-bbca-50d757c1b62d.png)
+![image](https://user-images.githubusercontent.com/113303734/198079229-6206e4ae-5719-490a-a6d1-997ba68584a0.png)
 
-- Запустила Anaconda Prompt для возможности запуска команд через консоль. Написала серию команд для создания и активации нового ML-агента, а также для скачивания необходимых библиотек: mlagents 0.28.0 (устанавливала версию ниже); torch 1.7.1;
+- Запустила Anaconda Prompt для возможности запуска команд через консоль. Написала серию команд для создания и активации нового ML-агента, а также для скачивания необходимых библиотек: mlagents 0.28.0 (устанавливала версию ниже); torch 1.7.1.
+
+![image](https://user-images.githubusercontent.com/113303734/198079310-1826c85a-00e9-4ab8-b720-a9091060725f.png)
+![image](https://user-images.githubusercontent.com/113303734/198079460-49d18ee0-af5a-49d3-acca-44d07606c429.png)
+![image](https://user-images.githubusercontent.com/113303734/198079614-4518c476-b9d1-4b63-a859-536260ecd33d.png)
+
+- Создала на сцене плоскость, куб и сферу.
+
+![image](https://user-images.githubusercontent.com/113303734/198079988-cbb09a47-8ce5-445b-b050-227ee56fbf68.png)
+
+C# код:
+
+```py
+
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using Unity.MLAgents;
+using Unity.MLAgents.Sensors;
+using Unity.MLAgents.Actuators;
+
+public class RollerAgent : Agent
+{
+    Rigidbody rBody;
+    // Start is called before the first frame update
+    void Start()
+    {
+        rBody = GetComponent<Rigidbody>();
+    }
+
+    public Transform Target;
+    public override void OnEpisodeBegin()
+    {
+        if (this.transform.localPosition.y < 0)
+        {
+            this.rBody.angularVelocity = Vector3.zero;
+            this.rBody.velocity = Vector3.zero;
+            this.transform.localPosition = new Vector3(0, 0.5f, 0);
+        }
+
+        Target.localPosition = new Vector3(Random.value * 8-4, 0.5f, Random.value * 8-4);
+    }
+    public override void CollectObservations(VectorSensor sensor)
+    {
+        sensor.AddObservation(Target.localPosition);
+        sensor.AddObservation(this.transform.localPosition);
+        sensor.AddObservation(rBody.velocity.x);
+        sensor.AddObservation(rBody.velocity.z);
+    }
+    public float forceMultiplier = 10;
+    public override void OnActionReceived(ActionBuffers actionBuffers)
+    {
+        Vector3 controlSignal = Vector3.zero;
+        controlSignal.x = actionBuffers.ContinuousActions[0];
+        controlSignal.z = actionBuffers.ContinuousActions[1];
+        rBody.AddForce(controlSignal * forceMultiplier);
+
+        float distanceToTarget = Vector3.Distance(this.transform.localPosition, Target.localPosition);
+
+        if(distanceToTarget < 1.42f)
+        {
+            SetReward(1.0f);
+            EndEpisode();
+        }
+        else if (this.transform.localPosition.y < 0)
+        {
+            EndEpisode();
+        }
+    }
+}
+
+```
+- Добавление компонентов Rigidbody, Decision Requester, Behavior Parameters:
+
+![image](https://user-images.githubusercontent.com/113303734/198080908-fd933fd4-940b-4c64-a8d5-42a6ffe9d10d.png)
+
+- После добавления файла конфигурации нейронной сети в корень проекта, запускаем работу ml-агента:
+
+![image](https://user-images.githubusercontent.com/113303734/198081248-c98658df-07e3-4534-9836-625ac4f3ef18.png)
+
+- Возвращаемся в Unity и проверяем работу ML-агента. При запуске программы в консоли выводится следующий код:
+
+![image](https://user-images.githubusercontent.com/113303734/198081716-26ba30d6-a777-420f-8ad3-24d03066cada.png)
+
+- Сделала 3, 9, 27 копий модели «Плоскость-Сфера-Куб»:
 
 
 
