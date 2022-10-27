@@ -293,7 +293,7 @@ public class RollerAgent : Agent
 
 - После обучения, проверила работоспособность модели:
 
-![image](https://user-images.githubusercontent.com/113303734/198278050-de8a6fb1-3163-4de6-a8ab-69c6eec42f73.png
+![image](https://user-images.githubusercontent.com/113303734/198282332-64a298e9-2818-42c7-86ef-a16527665d3a.png)
 
 ## Выводы
 
