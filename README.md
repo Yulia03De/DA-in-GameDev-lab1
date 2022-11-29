@@ -1,5 +1,5 @@
 # АНАЛИЗ ДАННЫХ И ИСКУССТВЕННЫЙ ИНТЕЛЛЕКТ [in GameDev]
-Отчет по лабораторной работе #1 выполнила:
+Отчет по лабораторной работе #4 выполнила:
 - Дедюхина Юлия Сергеевна
 - РИ210930
 Отметка о выполнении заданий (заполняется студентом):
@@ -35,188 +35,201 @@
 - ✨Magic ✨
 
 ## Цель работы
-Ознакомиться с основными операторами зыка Python на примере реализации линейной регрессии.
+Познакомиться с работой перцептрона на практике при помощи Unity. Обучить перцептрон логическим операциям.
 
 ## Задание 1
-### Написать программы Hello World на Python и Unity.
+### В проекте Unity реализовать перцептрон, который умеет производить вычисления: OR, AND, NAND, XOR и дать комметрарии о корректности работы.
+
 Ход работы:
 
+- Создала пустой 3D проект Unity.
+- В качестве исходных данных был предоставлен скрипт-файл, в котором описана работа перцептрона. 
+
 ```py
 
-print('Hello World')
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+[System.Serializable]
+public class TrainingSet
+{
+	public double[] input;
+	public double output;
+}
+
+public class Perceptron : MonoBehaviour {
+
+	public TrainingSet[] ts;
+	double[] weights = {0,0};
+	double bias = 0;
+	double totalError = 0;
+
+	double DotProductBias(double[] v1, double[] v2) 
+	{
+		if (v1 == null || v2 == null)
+			return -1;
+	 
+		if (v1.Length != v2.Length)
+			return -1;
+	 
+		double d = 0;
+		for (int x = 0; x < v1.Length; x++)
+		{
+			d += v1[x] * v2[x];
+		}
+
+		d += bias;
+	 
+		return d;
+	}
+
+	double CalcOutput(int i)
+	{
+		double dp = DotProductBias(weights,ts[i].input);
+		if(dp > 0) return(1);
+		return (0);
+	}
+
+	void InitialiseWeights()
+	{
+		for(int i = 0; i < weights.Length; i++)
+		{
+			weights[i] = Random.Range(-1.0f,1.0f);
+		}
+		bias = Random.Range(-1.0f,1.0f);
+	}
+
+	void UpdateWeights(int j)
+	{
+		double error = ts[j].output - CalcOutput(j);
+		totalError += Mathf.Abs((float)error);
+		for(int i = 0; i < weights.Length; i++)
+		{			
+			weights[i] = weights[i] + error*ts[j].input[i]; 
+		}
+		bias += error;
+	}
+
+	double CalcOutput(double i1, double i2)
+	{
+		double[] inp = new double[] {i1, i2};
+		double dp = DotProductBias(weights,inp);
+		if(dp > 0) return(1);
+		return (0);
+	}
+
+	void Train(int epochs)
+	{
+		InitialiseWeights();
+		
+		for(int e = 0; e < epochs; e++)
+		{
+			totalError = 0;
+			for(int t = 0; t < ts.Length; t++)
+			{
+				UpdateWeights(t);
+				Debug.Log("W1: " + (weights[0]) + " W2: " + (weights[1]) + " B: " + bias);
+			}
+			Debug.Log("TOTAL ERROR: " + totalError);
+		}
+	}
+
+	void Start () {
+		Train(8);
+		Debug.Log("Test 0 0: " + CalcOutput(0,0));
+		Debug.Log("Test 0 1: " + CalcOutput(0,1));
+		Debug.Log("Test 1 0: " + CalcOutput(1,0));
+		Debug.Log("Test 1 1: " + CalcOutput(1,1));		
+	}
+	
+	void Update () {
+		
+	}
+}
 
 ```
-- Скриншоты с демонстрацией сохранения документа google.colab и выводом сообщения Hello World для Python:
+- Реализация операции OR ("Или", дизъюнкция):
 
-![image](https://user-images.githubusercontent.com/113303734/192341707-1a9d5110-6804-4577-8a3f-8a46b8eb5c08.png)
-![image](https://user-images.githubusercontent.com/113303734/192341785-69cb4c5a-fa55-466c-a511-554930b8e9e7.png)
+![image](https://user-images.githubusercontent.com/113303734/204554448-202d2abe-61af-424f-96a3-7e4ad7217b36.png)
 
-- Скриншоты вывода сообщения Hello World в консоль для Unity:
+Установила значения для скрипта:
 
-![image](https://user-images.githubusercontent.com/113303734/192337752-a017bb73-55d5-46ee-ac1a-669667ab752e.png)
-![image](https://user-images.githubusercontent.com/113303734/192337825-be00f5a3-c19b-473b-977d-fd6dce160d5b.png)
+![image](https://user-images.githubusercontent.com/113303734/204541235-d0269809-6b1a-4bcb-b04b-23b57248320c.png)
 
+Значение Total Error отвечает за обучение перцептрона. Если значение больше 0, значит модель не обучилась и следует увеличить количество эпох. Если значение равно 0, значит модель успешно обучилась.
+
+В результате запуска проекта, можно сделать вывод, что перцептрон обучился безошибочно на 5 эпохе:
+
+![image](https://user-images.githubusercontent.com/113303734/204543848-ec75efd9-f1a1-447c-8f4d-fb5741ebfd3d.png)
+![image](https://user-images.githubusercontent.com/113303734/204543894-4356968f-c3f1-4993-9ea2-6522d3db622a.png)
+![image](https://user-images.githubusercontent.com/113303734/204543971-176f6de6-b4b1-45a5-a58a-d251df394373.png)
+![image](https://user-images.githubusercontent.com/113303734/204544005-05022599-c0c8-471e-8f31-1b92e30c17c6.png)
+![image](https://user-images.githubusercontent.com/113303734/204544041-658bf84d-44d3-410c-ac64-61753ce83023.png)
+
+- Реализация операции AND ("И", конъюнкция):
+
+![image](https://user-images.githubusercontent.com/113303734/204554352-95713c09-8499-4e84-be5b-7fade1993daa.png)
+
+Установила значения для скрипта:
+
+![image](https://user-images.githubusercontent.com/113303734/204547041-45607f17-8266-4081-8bf8-128d19b84088.png)
+
+В результате запуска проекта, можно сделать вывод, что перцептрон обучился безошибочно также на 5 эпохе:
+
+![image](https://user-images.githubusercontent.com/113303734/204552150-c8d74666-6161-4bb1-9015-657174765f34.png)
+![image](https://user-images.githubusercontent.com/113303734/204552325-cd0925a7-2a5d-4716-a37e-3e9779a7ab11.png)
+![image](https://user-images.githubusercontent.com/113303734/204552500-f40d1f1b-64dc-4d4a-9ac1-ab0daf11010c.png)
+![image](https://user-images.githubusercontent.com/113303734/204552754-ab335653-a567-400a-bcaa-d25f5835de32.png)
+![image](https://user-images.githubusercontent.com/113303734/204552899-b98a9870-3c5c-4f1a-bcdc-ccb3c46b3760.png)
+
+- Реализация операции NAND (отрицание конъюнкции):
+
+![image](https://user-images.githubusercontent.com/113303734/204554247-d46cc3dd-9c43-450d-bab1-2181dffc829a.png)
+
+Установила значения для скрипта:
+
+![image](https://user-images.githubusercontent.com/113303734/204556815-65e4f112-1141-475d-be8f-0dae9045ab75.png)
+
+В результате запуска проекта 5 эпох было мало, поэтому я установила значение 6, при котором перцептрон обучился безошибочно:
+
+![image](https://user-images.githubusercontent.com/113303734/204558583-700e9a67-7ac0-49c8-8fd5-41e17a12e20e.png)
+![image](https://user-images.githubusercontent.com/113303734/204558695-ea4c84f5-062a-46a2-889b-e1c5c4a39e72.png)
+![image](https://user-images.githubusercontent.com/113303734/204558839-e7cad1d9-4111-4fe6-941f-520a2f502712.png)
+![image](https://user-images.githubusercontent.com/113303734/204558945-67b718ce-e819-4d9d-8d75-66524aa28cff.png)
+![image](https://user-images.githubusercontent.com/113303734/204559161-d4bf0e8a-5986-4506-bb3a-5d86686777b7.png)
+![image](https://user-images.githubusercontent.com/113303734/204559250-cde671b0-1fb3-48e2-becb-4058c98f31c3.png)
+
+- Реализация операции XOR (исключающее "Или"):
+
+![image](https://user-images.githubusercontent.com/113303734/204560146-6b267af1-aa4c-48e7-814c-42af93ea663b.png)
+
+Установила значения для скрипта:
+
+![image](https://user-images.githubusercontent.com/113303734/204561325-28301caf-b34e-4743-89f8-726c82f56b0c.png)
+
+При нескольких попытках 6 эпох было мало для безошибочного обучения. Можно сделать вывод, что однослойный перцептрон не может обучиться этой операции, так как однослойные перцептроны способны изучать только линейно разделимые паттерны. Операция XOR не является линейной задачей, поэтому следует добавить еще слои перцептронов.
+
+Результат запуска проекта при 6 эпохах:
+
+![image](https://user-images.githubusercontent.com/113303734/204563889-17da571b-cced-4230-8994-f162d5438b1d.png)
 
 ## Задание 2
-### Пошагово выполнить каждый пункт с описанием и примером реализации задачи.
+### Построить графики зависимости количества эпох от ошибки обучения. Указать от чего зависит необходимое количество эпох обучения.
+
 Ход работы: 
 
-- Произвести подготовку данных для работы с алгоритмом линейной регрессии. 10 видов данных были установлены случайным образом, и данные находились в линейной зависимости. Данные преобразуются в формат массива, чтобы их можно было вычислить напрямую при использовании умножения и сложения.
-- Определите связанные функции. Функция модели: определяет модель линейной регрессии wx+b. Функция потерь: функция потерь среднеквадратичной ошибки. Функция оптимизации: метод градиентного спуска для нахождения частных производных w и b.
 
-```py
-
-In [ ]:
-#Import the required modules, numpy for calculation, and Matplotlib for drawing
-import numpy as np
-import matplotlib.pyplot as plt
-#This code is for jupyter Notebook only
-%matplotlib inline
-
-# define data, and change list to array
-x = [3,21,22,34,54,34,55,67,89,99]
-x = np.array(x)
-y = [2,22,24,65,79,82,55,130,150,199]
-y = np.array(y)
-
-#Show the effect of a scatter plot
-plt.scatter(x,y)
-
-#The basic linear regression model is wx+b, and since this is a two-dimensional space, the model is ax+b
-def model(a, b, x):
-    return a*x + b
-
-#The most commonly used loss function of linear regresstion model is the loss function of mean, variance difference
-def loss_function(a, b, x, y):
-    num = len(x)
-    prediction = model(a, b, x)
-    return (0.5/num)*(mss.square(prediction - y)).sum()
-
-#The optimization function mainly USES partial derivatives to update two parameters a and b
-def optimize (a, b, x, y):
-    num = len(x)
-    prediction = model(a, b, x)
-    #Update the values of A and B by finding the partial derivatives of the loss function on a and b
-    da = (1.0/num)*((prediction - y)*x).sum()
-    db = (1.0/num)*((prediction - y).sum())
-    a = a - Lr*da
-    b = b - Lr*db
-    return a, b
-
-#iterated function, return a and b
-def iterate (a, b, x, y, times):
-    for i in range (times):
-        a, b = optimize(a, b, x, y)
-    return a, b
-
-#Initialize parameters and display
-a = mss.random.rand(1)
-print (a)
-b = mss.random.rand(1)
-print(b)
-Lr = 0.000001
-
-#For the first iteration, the parameter values, losses, and visualization after the iteration are displayed
-a, b = iterate(a, b, x, y, 1)
-prediction = model(a, b, x)
-loss = loss_function(a, b, x, y)
-print(a, b, loss)
-plt.scatter(x, y)
-plt.plot(x, prediction)
-
-#For the second iteration, the parameter values, losses, and visualization after the iteration are displayed
-a, b = iterate(a, b, x, y, 2)
-prediction = model(a, b, x)
-loss = loss_function(a, b, x, y)
-print(a, b, loss)
-plt.scatter(x, y)
-plt.plot(x, prediction)
-
-#For the third iteration, the parameter values, losses, and visualization after the iteration are displayed
-a, b = iterate(a, b, x, y, 3)
-prediction = model(a, b, x)
-loss = loss_function(a, b, x, y)
-print(a, b, loss)
-plt.scatter(x, y)
-plt.plot(x, prediction)
-
-#For the fourth iteration, the parameter values, losses, and visualization after the iteration are displayed
-a, b = iterate(a, b, x, y, 4)
-prediction = model(a, b, x)
-loss = loss_function(a, b, x, y)
-print(a, b, loss)
-plt.scatter(x, y)
-plt.plot(x, prediction)
-
-#For the fifth iteration, the parameter values, losses, and visualization after the iteration are displayed
-a, b = iterate(a, b, x, y, 5)
-prediction = model(a, b, x)
-loss = loss_function(a, b, x, y)
-print(a, b, loss)
-plt.scatter(x, y)
-plt.plot(x, prediction)
-
-#For the sixth iteration, the parameter values, losses, and visualization after the iteration are displayed
-a, b = iterate(a, b, x, y, 10000)
-prediction = model(a, b, x)
-loss = loss_function(a, b, x, y)
-print(a, b, loss)
-plt.scatter(x, y)
-plt.plot(x, prediction)
-
-```
-
-- Результат программы при 1 итерации:
-
-![image](https://user-images.githubusercontent.com/113303734/192350723-7c25d147-189f-410a-b3c9-32731e36eca6.png)
-
-- Результат программы при 2 итерации:
-
-![image](https://user-images.githubusercontent.com/113303734/192350954-95482382-546d-4e14-9e06-cf2590ab8cb0.png)
-
-- Результат программы при 3 итерации:
-
-![image](https://user-images.githubusercontent.com/113303734/192351175-439e7e8b-5a37-4fef-8ee7-1d94b6bb6492.png)
-
-- Результат программы при 4 итерации:
-
-![image](https://user-images.githubusercontent.com/113303734/192351372-58cdfe4c-12db-446d-93e7-fe67c67c48cb.png)
-
-- Результат программы при 5 итерации:
-
-![image](https://user-images.githubusercontent.com/113303734/192351618-3d03d9e0-fc8c-4f82-b24c-68e7bdd0f4d6.png)
-
-- Результат программы при 6 итерации:
-
-![image](https://user-images.githubusercontent.com/113303734/192351884-7007a776-447a-434d-8875-69fde1d85ab3.png)
 
 ## Задание 3
-### Должна ли величина loss стремиться к нулю при изменении исходных данных? Ответьте на вопрос, приведите пример выполнения кода, который подтверждает ваш ответ.
+### Построить визуальную модель работы перцептрона на сцене Unity.
 
-Чем больше количество итераций, тем меньше значение loss, которое будет стремиться к нулю.
+Ход работы:
 
-![image](https://user-images.githubusercontent.com/113303734/192515161-477ff2e2-ad07-45f1-a45f-e97a1905c8b7.png)
-
-### Какова роль параметра Lr? Ответьте на вопрос, приведите пример выполнения кода, который подтверждает ваш ответ. В качестве эксперимента можете изменить значение параметра.
-
-Когда параметр Lr увеличивается, расфокусировка лучей также увеличивается. 
-Изменим параметр Lr и посмотрим изменение луча при разных значениях. Изначальное значение в программе было Lr = 0.000001
-
-Результат программы при Lr = 0.000001:
-
-![image](https://user-images.githubusercontent.com/113303734/192508830-4c1d3693-0a4d-4386-9efa-5ce60d4c4acb.png)
-
-Результат программы при Lr = 0.000000001:
-
-![image](https://user-images.githubusercontent.com/113303734/192509276-98473a84-08f9-4ce5-99cc-42b726cf7f6b.png)
-
-Результат программы при Lr = 0.0000008:
-
-![image](https://user-images.githubusercontent.com/113303734/192510375-6a242fa2-9a2f-43a9-acc6-9636e0401467.png)
 
 ## Выводы
 
-В ходе лабораторной работы ознакомилась с основными операторами зыка Python на примере реализации линейной регрессии. Также познакомилась с работой в Unity и Google.Colab 
+
 
 | Plugin | README |
 | ------ | ------ |
