@@ -149,6 +149,7 @@ public class Perceptron : MonoBehaviour {
 }
 
 ```
+
 - Реализация операции OR ("Или", дизъюнкция):
 
 ![image](https://user-images.githubusercontent.com/113303734/204554448-202d2abe-61af-424f-96a3-7e4ad7217b36.png)
@@ -246,11 +247,44 @@ public class Perceptron : MonoBehaviour {
 
 Ход работы:
 
+- Создала сцену, в которой будет реализована операция OR. В ней представлены черные и белые кубы. Черные кубы - "1", а белые - "0":
 
+![image](https://user-images.githubusercontent.com/113303734/204837108-ad3a8985-933e-497d-9e00-7716123fff91.png)
+
+- Создала скрипт для смены цвета у объекта при столкновении.
+
+```py
+
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class ChangeColor : MonoBehaviour
+{
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.GetComponent<Renderer>().material.color == Color.white && this.gameObject.GetComponent<Renderer>().material.color == Color.white)
+        {
+            other.gameObject.GetComponent<Renderer>().material.color = Color.white;
+            this.gameObject.GetComponent<Renderer>().material.color = Color.white;
+        }
+        else
+        {
+            other.gameObject.GetComponent<Renderer>().material.color = Color.black;
+            this.gameObject.GetComponent<Renderer>().material.color = Color.black;
+        }
+    }
+}
+
+```
+
+- Результат запуска программы:
+
+https://user-images.githubusercontent.com/113303734/204841984-ad189f79-9225-4c77-8f88-34c056565dc6.mp4
 
 ## Выводы
 
-
+В ходе работы познакомилась с работой перцептрона на практике при помощи Unity. Обучила перцептрон логическим операциям OR, AND и NAND. Логической операцией XOR однослойный перцептрон не смог обучиться, так как однослойные перцептроны способны изучать только линейно разделимые задачи. Построила графики зависимости количества эпох от ошибки обучения, а также визуализировала модель работы перцептрона на сцене Unity, в результате чего кубики окрасились в цвета, соответствующие результату логической операции OR.
 
 | Plugin | README |
 | ------ | ------ |
