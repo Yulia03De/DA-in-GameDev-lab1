@@ -175,13 +175,15 @@ public class Perceptron : MonoBehaviour {
 
 ![image](https://user-images.githubusercontent.com/113303734/204547041-45607f17-8266-4081-8bf8-128d19b84088.png)
 
-В результате запуска проекта, можно сделать вывод, что перцептрон обучился безошибочно также на 5 эпохе:
+В результате запуска проекта, можно сделать вывод, что перцептрон обучился безошибочно на 7 эпохе:
 
-![image](https://user-images.githubusercontent.com/113303734/204552150-c8d74666-6161-4bb1-9015-657174765f34.png)
-![image](https://user-images.githubusercontent.com/113303734/204552325-cd0925a7-2a5d-4716-a37e-3e9779a7ab11.png)
-![image](https://user-images.githubusercontent.com/113303734/204552500-f40d1f1b-64dc-4d4a-9ac1-ab0daf11010c.png)
-![image](https://user-images.githubusercontent.com/113303734/204552754-ab335653-a567-400a-bcaa-d25f5835de32.png)
-![image](https://user-images.githubusercontent.com/113303734/204552899-b98a9870-3c5c-4f1a-bcdc-ccb3c46b3760.png)
+![image](https://user-images.githubusercontent.com/113303734/204794170-63091027-1d1c-41fd-9504-366ef8b6b9f2.png)
+![image](https://user-images.githubusercontent.com/113303734/204794298-438a5c22-e3e5-4c01-b500-406c302c9e73.png)
+![image](https://user-images.githubusercontent.com/113303734/204794392-acf4943f-8faa-4622-8abe-0655f70ddf04.png)
+![image](https://user-images.githubusercontent.com/113303734/204794463-77af1a45-25cf-4134-832f-93078ea4a0ee.png)
+![image](https://user-images.githubusercontent.com/113303734/204794546-3dfc7267-e99d-408c-ac9d-118b372730c3.png)
+![image](https://user-images.githubusercontent.com/113303734/204794625-53eb31f5-72d4-4b9d-9eca-b24b4984030a.png)
+![image](https://user-images.githubusercontent.com/113303734/204794747-d7410a91-5bc2-4f25-b531-ede404c74506.png)
 
 - Реализация операции NAND (отрицание конъюнкции):
 
