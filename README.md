@@ -282,7 +282,7 @@ tensortboard --logdir=results
 
 ![image](https://user-images.githubusercontent.com/113303734/205133349-a4a76d4a-7c70-40b7-bba6-7a76b99463b1.png)
 
-- По умолчанию TensorBoard запустила по ссылке http://localhost:6006/#scalars:
+- По умолчанию TensorBoard запустила по ссылке http://localhost:6006/:
 
 ![image](https://user-images.githubusercontent.com/113303734/205133603-78de8a86-cd2a-4405-9ad2-92fd23bc42f6.png)
 ![image](https://user-images.githubusercontent.com/113303734/205133631-39f1dd37-ac30-4eb9-ba8e-bbd5b6d1a507.png)
@@ -340,18 +340,18 @@ epsilon: 0.1
 
 ```
 
-Значение epsilon - оно влияет на скорость изменения политики во время обучения. Соответствует допустимому порогу расхождения между старой и новой политикой при обновлении градиентного спуска. Я изменила значение с 0.2 до 0.1. Произошло замедление процесса обучения.
+Значение epsilon - влияет на скорость изменения политики во время обучения. Соответствует допустимому порогу расхождения между старой и новой политикой при обновлении градиентного спуска. Я изменила значение с 0.2 до 0.1. Произошло замедление процесса обучения.
 
 ![image](https://user-images.githubusercontent.com/113303734/205136196-73773741-3b25-4961-bdbb-183f7f7690ab.png)
 ![image](https://user-images.githubusercontent.com/113303734/205136235-569540db-cc9b-40bf-90d1-88e7b43aebac.png)
 ![image](https://user-images.githubusercontent.com/113303734/205136265-156874b1-0ced-44d1-8972-004342ff893b.png)
 
-http://localhost:6006/#scalars
+http://localhost:6006/
 
 ![image](https://user-images.githubusercontent.com/113303734/205136396-b2528735-a723-456b-a67d-e2822d5da431.png)
 ![image](https://user-images.githubusercontent.com/113303734/205136418-374c0180-0b1f-4e9f-8887-910ad313e4b4.png)
 
-Исходя из результатов графиков, можно сделать вывод, что изменились графики в Environment, Losses и в некоторых графиках Policy.
+Исходя из результатов графиков, можно сделать вывод, что произошли изменения в Environment, Losses и в некоторых графиках Policy.
 
 ## Задание 2
 ### Опишите результаты, выведенные в TensorBoard.
