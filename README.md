@@ -252,7 +252,7 @@ mlagents-learn Economic.yaml --run-id=Economic --force
 
 ![image](https://user-images.githubusercontent.com/113303734/205131081-9b299ae0-ac8d-4e76-9b8b-bcfb33211185.png)
 
-При запуске сцены в Unity все работает правильно, в командной строке увидила сообщение о считывании. yaml-файла.
+При запуске сцены в Unity все работает правильно, в командной строке увидела сообщение о считывании. yaml-файла.
 
 ![image](https://user-images.githubusercontent.com/113303734/205131117-ecc0bbe9-0b0f-4162-8425-a9c1cdca0870.png)
 ![image](https://user-images.githubusercontent.com/113303734/205131153-d0c7197a-47d3-489f-9a4b-8049ffbc6d22.png)
