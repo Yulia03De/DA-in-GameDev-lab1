@@ -342,12 +342,6 @@ epsilon: 0.1
 
 Значение epsilon - влияет на скорость изменения политики во время обучения. Соответствует допустимому порогу расхождения между старой и новой политикой при обновлении градиентного спуска. Я изменила значение с 0.2 до 0.1. Произошло замедление процесса обучения.
 
-![image](https://user-images.githubusercontent.com/113303734/205136196-73773741-3b25-4961-bdbb-183f7f7690ab.png)
-![image](https://user-images.githubusercontent.com/113303734/205136235-569540db-cc9b-40bf-90d1-88e7b43aebac.png)
-![image](https://user-images.githubusercontent.com/113303734/205136265-156874b1-0ced-44d1-8972-004342ff893b.png)
-
-http://localhost:6006/
-
 ![image](https://user-images.githubusercontent.com/113303734/205136396-b2528735-a723-456b-a67d-e2822d5da431.png)
 ![image](https://user-images.githubusercontent.com/113303734/205136418-374c0180-0b1f-4e9f-8887-910ad313e4b4.png)
 
@@ -358,15 +352,11 @@ http://localhost:6006/
 
 Ход работы: 
 
-- 
-
 ```py
 
 
 
 ```
-
--
 
 
 ## Выводы
