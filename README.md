@@ -200,7 +200,7 @@ public class Move : Agent
 ```
 - Поместила файл Economic.yaml в папку с проектом Unity. Файл является конфигуратором обучающего тренажера:
 
-![image](https://user-images.githubusercontent.com/113303734/205128908-a80d7371-32a5-46e4-8da3-f8b53c5f6d4a.png)
+![image](https://user-images.githubusercontent.com/113303734/205137407-374bc801-2f89-4f08-bdc7-1abc09ab2be8.png)
 
 - Запустила Anaconda Prompt (от имени администратора). Создала виртуальное пространство:
 
